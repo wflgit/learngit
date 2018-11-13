@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- - Scheduler context for Quartz. - Note that Quartz Jobs are throwaway objects, in contrast to shared TimerTasks. -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="
+             http://www.springframework.org/schema/beans
+             http://www.springframework.org/schema/beans/spring-beans.xsd">
+	<bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean"  lazy-init="false" >
+		<property name="triggers">
+			<list>
+				 <ref bean="schedulerServerTest"/>
+			</list>
+		</property>
+		<property name="autoStartup" value="false" />
+		<property name="startupDelay" value="30" />
+	</bean>
+	 <bean id="schedulerServerTest" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+	        <property name="jobDetail" ref="schedulerServerDetail" />
+	        <property name="cronExpression" value="0 20 14 * * ?"/>
+	        <property name="description" value="定时器测试"></property>
+	        <property name="group" value="illegal" />
+	 </bean>
+	 <bean id="schedulerServerDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="schedulerServer" /><!-- 要执行的类 -->
+		<property name="targetMethod" value="schedulerTest" /><!-- 要执行类当中的方法 -->
+		<property name="concurrent" value="false" /><!-- 是否允许任务并发执行。当值为false时，表示必须等到前一个线程处理完毕后才再启一个新的线程 -->
+	</bean>
+</beans>
